@@ -1,0 +1,87 @@
+syntax = "v1"
+
+type UserItem {
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Phone      string `json:"phone"`
+	Type       int64  `json:"type"`
+	CreateTime int64  `json:"createTime"`
+	Status     int64  `json:"status"`
+}
+
+type (
+	// 定义登录接口的 json 请求体
+	LoginReq {
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
+	}
+	// 定义登录接口的 json 响应体
+	LoginResp {
+		Data   UserItem `json:"data"`
+		Status int64    `json:"status"`
+		Token  string   `json:"token"`
+		Msg    string   `json:"msg"`
+	}
+)
+
+type (
+	// 定义获取用户信息的 json 请求体
+	GetUserInfoReq {
+		Id string `path:"id"`
+	}
+	// 定义获取用户信息的 json 响应体
+	GetUserInfoResp {
+		Data   UserItem `json:"data"`
+		Status int64    `json:"status"`
+		Msg    string   `json:"msg"`
+	}
+)
+
+type (
+	RegisterReq {
+		Name     string `json:"name"`
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
+	}
+	// 定义获取用户信息的 json 响应体
+	RegisterResp {
+		Status int64  `json:"status"`
+		Token  string `json:"token"`
+		Msg    string `json:"msg"`
+	}
+)
+
+// 登录
+@server (
+	group:  login
+	prefix: /v1
+)
+service user {
+	@handler login
+	post /login (LoginReq) returns (LoginResp)
+}
+
+// 注册
+@server (
+	group:  register
+	prefix: /v1
+)
+service user {
+	@handler register
+	post /register (RegisterReq) returns (RegisterResp)
+}
+
+// 获取用户详情
+@server (
+	jwt:    Auth
+	group:  user
+	prefix: /v1
+)
+service user {
+	@handler getUserInfo
+	get /user/:id (GetUserInfoReq) returns (GetUserInfoResp)
+
+	@handler getSelfInfo
+	get /user/self returns (GetUserInfoResp)
+}
+

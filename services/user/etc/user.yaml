@@ -1,0 +1,19 @@
+Name: user
+Host: 0.0.0.0
+Port: 8888
+
+# Auth:
+#   AccessSecret: #TODO: 这里自己改自己的对应配置
+#   AccessExpire: 86400
+
+# Mysql:
+#   DataSource: #TODO: 这里自己改自己的对应配置
+
+# Redis:
+#   Host: 127.0.0.1:6379
+#   Type: node
+#   Pass: #TODO: 这里自己改自己的对应配置
+
+# Salt:
+#   Pwd: #这里自己改自己的对应配置
+

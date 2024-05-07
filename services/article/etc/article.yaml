@@ -1,0 +1,12 @@
+Name: article
+Host: 0.0.0.0
+Port: 8889
+
+# Auth:
+#   AccessSecret: #TODO: 这里自己改自己的对应配置
+#   AccessExpire: 86400
+
+# Mysql:
+#   DataSource: #TODO: 这里自己改自己的对应配置
+
+

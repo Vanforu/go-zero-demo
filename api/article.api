@@ -1,0 +1,177 @@
+syntax = "a1"
+
+type ArticleItem {
+	Id         string `json:"id"`
+	Title      string `json:"title"`
+	Desc       string `json:"desc"`
+	Content    string `json:"content"`
+	Author     string `json:"author"`
+	Assets     string `json:"assets"`
+	Status     int64  `json:"status"`
+	CreateTime int64  `json:"createTime"`
+}
+
+type CommentItem {
+	Id         string `json:"id"`
+	Pid        string `json:"pid"`
+	Aid        string `json:"aid"`
+	Content    string `json:"content"`
+	Creator    string `json:"creator"`
+	CreateTime string `json:"createTime"`
+}
+
+type CommonResp {
+	Status int64  `json:"status"`
+	Msg    string `json:"msg"`
+}
+
+type (
+	CreateArticleReq {
+		Title   string `json:"title"`
+		Desc    string `json:"desc"`
+		Content string `json:"content"`
+		Assets  string `json:"assets"`
+		Status  int64  `json:"status"`
+	}
+	CreateArticleResp {
+		Status int64  `json:"status"`
+		Msg    string `json:"msg"`
+		Id     string `json:"id"`
+	}
+	UpdateArticleReq {
+		Id      string `json:"id"`
+		Title   string `json:"title"`
+		Desc    string `json:"desc"`
+		Content string `json:"content"`
+		Assets  string `json:"assets"`
+		Status  int64  `json:"status"`
+	}
+	UpdateArticleResp {
+		Status int64  `json:"status"`
+		Msg    string `json:"msg"`
+	}
+	DeleteArticleReq {
+		Id string `json:"id"`
+	}
+	GetArticleListReq {
+		Page int64 `json:"page"`
+		Size int64 `json:"size"`
+	}
+	GetArticleListResp {
+		List  []ArticleItem `json:"list"`
+		Total int64         `json:"total"`
+	}
+	GetArticleDetailReq {
+		Id string `path:"id"`
+	}
+	GetArticleDetailResp {
+		Status int64       `json:"status"`
+		Msg    string      `json:"msg"`
+		Data   ArticleItem `json:"data"`
+	}
+)
+
+type (
+	CreateCommentReq {
+		Pid     string `json:"pid"`
+		Aid     string `json:"aid"`
+		Content string `json:"content"`
+	}
+	CreateCommentResp {
+		Status int64  `json:"status"`
+		Msg    string `json:"msg"`
+	}
+	DeleteCommentReq {
+		Id string `json:"id"`
+	}
+	GetCommentByAidReq {
+		Aid string `path:"aid"`
+	}
+	GetCommentByAidResp {
+		List  []CommentItem `json:"list"`
+		Total int64         `json:"total"`
+	}
+	GetCommentByPidReq {
+		Pid string `path:"pid"`
+	}
+	GetCommentByPidResp {
+		List  []CommentItem `json:"list"`
+		Total int64         `json:"total"`
+	}
+)
+
+type (
+	UploadImageReq {
+		File    []byte `json:"file"`
+		Type    string `json:"type"`
+		UnionID string `json:"unionId"`
+	}
+	UploadImageInfo {
+		Url  string `json:"url"`
+		Alt  string `json:"alt"`
+		Href string `json:"href"`
+	}
+	UploadImageResp {
+		Errno   int64           `json:"errno"`
+		Data    UploadImageInfo `json:"data"`
+		Message string          `json:"message"`
+	}
+)
+
+// 静态资源相关接口
+@server (
+	jwt:    Auth
+	group:  upload
+	prefix: /a1
+)
+service article {
+	@handler uploadImage
+	post /upload/image (UploadImageReq) returns (UploadImageResp)
+
+	@handler uploadVideo
+	post /upload/video (UpdateArticleReq) returns (CommonResp)
+}
+
+// 文章相关接口
+@server (
+	jwt:    Auth
+	group:  article
+	prefix: /a1
+)
+service article {
+	@handler createArticle
+	post /article/create (CreateArticleReq) returns (CreateArticleResp)
+
+	@handler updateArticle
+	post /article/update (UpdateArticleReq) returns (CommonResp)
+
+	@handler deleteArticle
+	post /article/delete (DeleteArticleReq) returns (CommonResp)
+
+	@handler getArticleList
+	get /article/list (GetArticleListReq) returns (GetArticleListResp)
+
+	@handler getArticleDetail
+	get /article/:id (GetArticleDetailReq) returns (GetArticleDetailResp)
+}
+
+// 评论相关接口
+@server (
+	jwt:    Auth
+	group:  comment
+	prefix: /a1
+)
+service article {
+	@handler createComment
+	post /comment/create (CreateCommentReq) returns (CreateCommentResp)
+
+	@handler deleteComment
+	post /comment/delete (DeleteCommentReq) returns (CommonResp)
+
+	@handler getCommentByAid
+	get /article/comment/:aid (GetCommentByAidReq) returns (GetCommentByAidResp)
+
+	@handler getCommentByPid
+	get /comment/:pid (GetCommentByPidReq) returns (GetCommentByPidResp)
+}
+
